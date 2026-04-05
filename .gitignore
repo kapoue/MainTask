@@ -1,0 +1,19 @@
+# IDE
+*.iml
+.idea/
+.DS_Store
+
+# Gradle
+.gradle/
+/build/
+/app/build/
+
+# Local config (chemin SDK, keystore)
+local.properties
+
+# Keystore
+*.jks
+*.keystore
+
+# Captures
+/captures/
