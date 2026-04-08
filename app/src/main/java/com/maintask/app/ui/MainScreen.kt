@@ -20,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.Backup
-import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Restore
@@ -110,15 +109,6 @@ fun MainScreen(viewModel: TaskViewModel = viewModel()) {
             TopAppBar(
                 title = { Text("MainTask") },
                 actions = {
-                    if (tasks.isNotEmpty()) {
-                        IconButton(onClick = { viewModel.testNotification(tasks.first()) }) {
-                            Icon(
-                                Icons.Filled.BugReport,
-                                contentDescription = "Test notification",
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        }
-                    }
                     Box {
                         IconButton(onClick = { showMenu = true }) {
                             Icon(

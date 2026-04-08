@@ -88,7 +88,7 @@ private fun WidgetTaskRow(task: Task, textColor: Color, isDark: Boolean) {
         days < 0  -> "En retard"
         days == 0 -> "Aujourd'hui"
         days == 1 -> "Demain"
-        else      -> "J+$days"
+        else      -> "Dans $days jours"
     }
     val labelColor = when {
         days < 0  -> if (isDark) Color(0xFFEF9A9A) else Color(0xFFD32F2F)
