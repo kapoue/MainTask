@@ -3,7 +3,7 @@ package com.maintask.app.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlin.math.floor
+import java.util.Calendar
 
 @Entity(tableName = "tasks")
 data class Task(
@@ -25,4 +25,15 @@ val Task.effectiveDueAt: Long
     get() = if (isSnoozed) snoozedUntil else nextDueAt
 
 val Task.daysRemaining: Int
-    get() = floor((effectiveDueAt - System.currentTimeMillis()).toDouble() / 86_400_000.0).toInt()
+    get() {
+        val dueCal = Calendar.getInstance().apply {
+            timeInMillis = effectiveDueAt
+            set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+        }
+        val todayCal = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+        }
+        return ((dueCal.timeInMillis - todayCal.timeInMillis) / 86_400_000L).toInt()
+    }
