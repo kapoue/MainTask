@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="#F5F5F5">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MainTask"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#1565C0" />
+
+    <Space android:layout_width="match_parent" android:layout_height="8dp" />
+
+    <!-- Tâche 1 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingVertical="3dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Filtre aspirateur"
+            android:textSize="15sp"
+            android:textColor="#333333" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aujourd'hui · 1 mai"
+            android:textSize="13sp"
+            android:textColor="#D32F2F" />
+    </LinearLayout>
+
+    <!-- Tâche 2 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingVertical="3dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pression pneus voiture"
+            android:textSize="15sp"
+            android:textColor="#333333" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dans 4 jours · 5 mai"
+            android:textSize="13sp"
+            android:textColor="#F57C00" />
+    </LinearLayout>
+
+    <!-- Tâche 3 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingVertical="3dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Détecteurs incendie"
+            android:textSize="15sp"
+            android:textColor="#333333" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dans 28 jours · 29 mai"
+            android:textSize="13sp"
+            android:textColor="#388E3C" />
+    </LinearLayout>
+
+</LinearLayout>

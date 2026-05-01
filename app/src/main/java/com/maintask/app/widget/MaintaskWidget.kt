@@ -27,6 +27,10 @@ import com.maintask.app.MainActivity
 import com.maintask.app.data.Task
 import com.maintask.app.data.TaskDatabase
 import com.maintask.app.data.daysRemaining
+import com.maintask.app.data.effectiveDueAt
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class MaintaskWidget : GlanceAppWidget() {
 
@@ -84,11 +88,20 @@ private fun WidgetBody(tasks: List<Task>, isDark: Boolean) {
 @Composable
 private fun WidgetTaskRow(task: Task, textColor: Color, isDark: Boolean) {
     val days = task.daysRemaining
+    val dueDateLabel: String = run {
+        val cal = Calendar.getInstance().apply { timeInMillis = task.effectiveDueAt }
+        val today = Calendar.getInstance()
+        val fmt = if (cal.get(Calendar.YEAR) == today.get(Calendar.YEAR))
+            SimpleDateFormat("d MMM", Locale.FRENCH)
+        else
+            SimpleDateFormat("d MMM yyyy", Locale.FRENCH)
+        fmt.format(cal.time)
+    }
     val label = when {
-        days < 0  -> "En retard"
-        days == 0 -> "Aujourd'hui"
-        days == 1 -> "Demain"
-        else      -> "Dans $days jours"
+        days < 0  -> "En retard · $dueDateLabel"
+        days == 0 -> "Aujourd'hui · $dueDateLabel"
+        days == 1 -> "Demain · $dueDateLabel"
+        else      -> "Dans $days jours · $dueDateLabel"
     }
     val labelColor = when {
         days < 0  -> if (isDark) Color(0xFFEF9A9A) else Color(0xFFD32F2F)
