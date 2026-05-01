@@ -33,7 +33,6 @@ abstract class TaskDatabase : RoomDatabase() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
             val now = System.currentTimeMillis()
-            // lastDoneAt = now - intervalDays → toutes les tâches dues aujourd'hui au premier lancement
             listOf(
                 Triple("Ventilation salle de bain", 180, "home"),
                 Triple("Filtre aspirateur",          30,  "home"),
@@ -44,10 +43,9 @@ abstract class TaskDatabase : RoomDatabase() {
                 Triple("Détecteurs incendie",        90,  "security"),
                 Triple("Lave-glace voiture",         90,  "car")
             ).forEach { (title, interval, icon) ->
-                val lastDone = now - interval * 86_400_000L
                 db.execSQL(
                     "INSERT INTO tasks (title, intervalDays, lastDoneAt, iconKey) VALUES (?, ?, ?, ?)",
-                    arrayOf(title, interval, lastDone, icon)
+                    arrayOf(title, interval, now, icon)
                 )
             }
         }

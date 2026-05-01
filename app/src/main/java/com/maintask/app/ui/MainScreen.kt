@@ -57,9 +57,11 @@ import android.widget.Toast
 import com.maintask.app.backup.BackupManager
 import com.maintask.app.data.Task
 import com.maintask.app.data.daysRemaining
+import com.maintask.app.data.effectiveDueAt
 import com.maintask.app.data.isSnoozed
 import com.maintask.app.viewmodel.TaskViewModel
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -254,13 +256,22 @@ fun TaskCard(
         days <= 3 -> Color(0xFFF57C00)  // Orange    – à venir
         else      -> Color(0xFF388E3C)  // Vert      – ok
     }
+    val dueDateLabel: String = run {
+        val cal = Calendar.getInstance().apply { timeInMillis = task.effectiveDueAt }
+        val today = Calendar.getInstance()
+        val fmt = if (cal.get(Calendar.YEAR) == today.get(Calendar.YEAR))
+            SimpleDateFormat("d MMM", Locale.FRENCH)
+        else
+            SimpleDateFormat("d MMM yyyy", Locale.FRENCH)
+        fmt.format(cal.time)
+    }
     val subtitle = when {
-        snoozed    -> if (days <= 1) "Reporté — demain" else "Reporté — dans $days jours"
-        days < -1  -> "En retard de ${-days} jours"
-        days == -1 -> "En retard d'1 jour"
-        days == 0  -> "À faire aujourd'hui"
-        days == 1  -> "Demain"
-        else       -> "Dans $days jours"
+        snoozed    -> if (days <= 1) "Reporté — demain · $dueDateLabel" else "Reporté — dans $days jours · $dueDateLabel"
+        days < -1  -> "En retard de ${-days} jours · $dueDateLabel"
+        days == -1 -> "En retard d'1 jour · $dueDateLabel"
+        days == 0  -> "À faire aujourd'hui · $dueDateLabel"
+        days == 1  -> "Demain · $dueDateLabel"
+        else       -> "Dans $days jours · $dueDateLabel"
     }
 
     Card(
