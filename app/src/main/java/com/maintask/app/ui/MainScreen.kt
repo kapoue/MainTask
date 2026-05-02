@@ -101,6 +101,8 @@ fun MainScreen(viewModel: TaskViewModel = viewModel()) {
             val parsed = BackupManager.importFromJson(json)
             pendingImportJson = json
             pendingImportCount = parsed.size
+        } catch (e: IllegalArgumentException) {
+            Toast.makeText(context, e.message ?: "Fichier invalide", Toast.LENGTH_LONG).show()
         } catch (e: Exception) {
             Toast.makeText(context, "Fichier invalide", Toast.LENGTH_SHORT).show()
         }

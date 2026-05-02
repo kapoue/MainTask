@@ -99,6 +99,10 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private suspend fun doUpdateWidget() {
-        try { MaintaskWidget().updateAll(getApplication<Application>()) } catch (e: Exception) {}
+        try {
+            MaintaskWidget().updateAll(getApplication<Application>())
+        } catch (e: Exception) {
+            android.util.Log.e("MainTask", "Widget update failed", e)
+        }
     }
 }

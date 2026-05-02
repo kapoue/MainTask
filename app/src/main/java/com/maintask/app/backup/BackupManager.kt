@@ -27,6 +27,10 @@ object BackupManager {
 
     fun importFromJson(json: String): List<Task> {
         val root = JSONObject(json)
+        val version = root.optInt("version", 1)
+        if (version > VERSION) {
+            throw IllegalArgumentException("Format de sauvegarde non supporté (version $version)")
+        }
         val array = root.getJSONArray("tasks")
         return (0 until array.length()).map { i ->
             array.getJSONObject(i).let { obj ->

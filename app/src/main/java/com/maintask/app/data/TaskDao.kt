@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TaskDao {
 
-    @Query("SELECT * FROM tasks ORDER BY MAX(lastDoneAt + intervalDays * 86400000, snoozedUntil)")
+    @Query("SELECT * FROM tasks ORDER BY CASE WHEN snoozedUntil > (strftime('%s','now') * 1000) AND snoozedUntil > (lastDoneAt + intervalDays * 86400000) THEN snoozedUntil ELSE lastDoneAt + intervalDays * 86400000 END")
     fun getAllSortedByDueDate(): Flow<List<Task>>
 
-    @Query("SELECT * FROM tasks ORDER BY MAX(lastDoneAt + intervalDays * 86400000, snoozedUntil)")
+    @Query("SELECT * FROM tasks ORDER BY CASE WHEN snoozedUntil > (strftime('%s','now') * 1000) AND snoozedUntil > (lastDoneAt + intervalDays * 86400000) THEN snoozedUntil ELSE lastDoneAt + intervalDays * 86400000 END")
     suspend fun getAllSortedByDueDateOnce(): List<Task>
 
     @Query("DELETE FROM tasks")
