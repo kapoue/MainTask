@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.AlertDialog
@@ -49,6 +50,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -75,6 +78,7 @@ fun MainScreen(viewModel: TaskViewModel = viewModel()) {
     var editingTask by remember { mutableStateOf<Task?>(null) }
     var snoozingTask by remember { mutableStateOf<Task?>(null) }
     var showMenu by remember { mutableStateOf(false) }
+    var showAbout by remember { mutableStateOf(false) }
     var exportJson by remember { mutableStateOf("") }
     var pendingImportJson by remember { mutableStateOf<String?>(null) }
     var pendingImportCount by remember { mutableStateOf(0) }
@@ -141,6 +145,14 @@ fun MainScreen(viewModel: TaskViewModel = viewModel()) {
                                 onClick = {
                                     showMenu = false
                                     importLauncher.launch(arrayOf("*/*"))
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("À propos") },
+                                leadingIcon = { Icon(Icons.Filled.Info, contentDescription = null) },
+                                onClick = {
+                                    showMenu = false
+                                    showAbout = true
                                 }
                             )
                         }
@@ -221,6 +233,38 @@ fun MainScreen(viewModel: TaskViewModel = viewModel()) {
                 snoozingTask = null
             },
             onDismiss = { snoozingTask = null }
+        )
+    }
+
+    if (showAbout) {
+        val uriHandler = LocalUriHandler.current
+        val version = remember {
+            try { context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "?" }
+            catch (e: Exception) { "?" }
+        }
+        AlertDialog(
+            onDismissRequest = { showAbout = false },
+            title = { Text("À propos") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text("Auteur : Kapoue")
+                    Text("Version : $version")
+                    Text("Licence : MIT (libre)")
+                    Text(
+                        text = "codeberg.org/kapoue/MainTask",
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            textDecoration = TextDecoration.Underline
+                        ),
+                        modifier = Modifier.clickable {
+                            uriHandler.openUri("https://codeberg.org/kapoue/MainTask")
+                        }
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showAbout = false }) { Text("Fermer") }
+            }
         )
     }
 

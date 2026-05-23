@@ -2,28 +2,37 @@ package com.maintask.app.widget
 
 import android.content.Context
 import android.content.res.Configuration
+import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
+import androidx.glance.Image
+import androidx.glance.ImageProvider
 import androidx.glance.action.actionStartActivity
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
+import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
+import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
+import androidx.glance.layout.size
+import androidx.glance.layout.width
 import androidx.glance.action.clickable
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.maintask.app.MainActivity
+import com.maintask.app.R
 import com.maintask.app.data.Task
 import com.maintask.app.data.TaskDatabase
 import com.maintask.app.data.daysRemaining
@@ -47,12 +56,22 @@ class MaintaskWidget : GlanceAppWidget() {
     }
 }
 
+@DrawableRes
+private fun iconResForKey(key: String): Int = when (key) {
+    "moto"     -> R.drawable.ic_widget_moto
+    "car"      -> R.drawable.ic_widget_car
+    "bike"     -> R.drawable.ic_widget_bike
+    "security" -> R.drawable.ic_widget_security
+    "home"     -> R.drawable.ic_widget_home
+    else       -> R.drawable.ic_widget_task
+}
+
 @Composable
 private fun WidgetBody(tasks: List<Task>, isDark: Boolean) {
-    val bgColor   = if (isDark) Color(0xFF1E1E1E) else Color(0xFFF5F5F5)
-    val textColor = if (isDark) Color(0xFFEEEEEE) else Color(0xFF333333)
+    val bgColor    = if (isDark) Color(0xFF1E1E1E) else Color(0xFFF5F5F5)
+    val textColor  = if (isDark) Color(0xFFEEEEEE) else Color(0xFF333333)
     val titleColor = if (isDark) Color(0xFF90CAF9) else Color(0xFF1565C0)
-    val subColor  = if (isDark) Color(0xFFBBBBBB) else Color(0xFF555555)
+    val subColor   = if (isDark) Color(0xFFBBBBBB) else Color(0xFF555555)
 
     val openAppAction = actionStartActivity<MainActivity>()
 
@@ -108,18 +127,28 @@ private fun WidgetTaskRow(task: Task, textColor: Color, isDark: Boolean) {
         days <= 3 -> if (isDark) Color(0xFFFFCC80) else Color(0xFFF57C00)
         else      -> if (isDark) Color(0xFFA5D6A7) else Color(0xFF388E3C)
     }
-    Column(
-        modifier = GlanceModifier.fillMaxWidth().padding(vertical = 3.dp)
+
+    Row(
+        modifier = GlanceModifier.fillMaxWidth().padding(vertical = 3.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = task.title,
-            style = TextStyle(color = ColorProvider(textColor), fontSize = 15.sp),
-            maxLines = 1
+        Image(
+            provider = ImageProvider(iconResForKey(task.iconKey)),
+            contentDescription = null,
+            modifier = GlanceModifier.size(16.dp),
+            colorFilter = ColorFilter.tint(ColorProvider(textColor))
         )
-        Text(
-            text = label,
-            style = TextStyle(color = ColorProvider(labelColor), fontSize = 13.sp)
-        )
+        Spacer(modifier = GlanceModifier.width(6.dp))
+        Column {
+            Text(
+                text = task.title,
+                style = TextStyle(color = ColorProvider(textColor), fontSize = 15.sp),
+                maxLines = 1
+            )
+            Text(
+                text = label,
+                style = TextStyle(color = ColorProvider(labelColor), fontSize = 13.sp)
+            )
+        }
     }
 }
-
