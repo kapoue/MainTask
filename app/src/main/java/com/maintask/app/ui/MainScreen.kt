@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Restore
+import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -202,8 +203,8 @@ fun MainScreen(viewModel: TaskViewModel = viewModel()) {
     if (showAddDialog) {
         TaskFormDialog(
             task = null,
-            onConfirm = { title, interval, icon ->
-                viewModel.addTask(title, interval, icon)
+            onConfirm = { title, interval, icon, note ->
+                viewModel.addTask(title, interval, icon, note)
                 showAddDialog = false
             },
             onDelete = null,
@@ -214,8 +215,8 @@ fun MainScreen(viewModel: TaskViewModel = viewModel()) {
     editingTask?.let { task ->
         TaskFormDialog(
             task = task,
-            onConfirm = { title, interval, icon ->
-                viewModel.updateTask(task.copy(title = title, intervalDays = interval, iconKey = icon))
+            onConfirm = { title, interval, icon, note ->
+                viewModel.updateTask(task.copy(title = title, intervalDays = interval, iconKey = icon, note = note))
                 editingTask = null
             },
             onDelete = {
@@ -350,7 +351,21 @@ fun TaskCard(
             Spacer(modifier = Modifier.width(14.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = task.title, style = MaterialTheme.typography.titleMedium)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = task.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.weight(1f)
+                    )
+                    if (task.note.isNotEmpty()) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Notes,
+                            contentDescription = "Note",
+                            tint = MaterialTheme.colorScheme.outline,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,

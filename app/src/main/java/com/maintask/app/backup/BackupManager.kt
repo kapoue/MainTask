@@ -6,7 +6,7 @@ import org.json.JSONObject
 
 object BackupManager {
 
-    private const val VERSION = 1
+    private const val VERSION = 2
 
     fun exportToJson(tasks: List<Task>): String {
         val array = JSONArray()
@@ -17,6 +17,7 @@ object BackupManager {
                 put("lastDoneAt", task.lastDoneAt)
                 put("iconKey", task.iconKey)
                 put("snoozedUntil", task.snoozedUntil)
+                put("note", task.note)
             })
         }
         return JSONObject().apply {
@@ -40,7 +41,8 @@ object BackupManager {
                     intervalDays = obj.getInt("intervalDays"),
                     lastDoneAt = obj.getLong("lastDoneAt"),
                     iconKey = obj.getString("iconKey"),
-                    snoozedUntil = obj.optLong("snoozedUntil", 0L)
+                    snoozedUntil = obj.optLong("snoozedUntil", 0L),
+                    note = obj.optString("note", "")
                 )
             }
         }

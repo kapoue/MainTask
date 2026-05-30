@@ -26,6 +26,7 @@ import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
+import androidx.glance.layout.wrapContentWidth
 import androidx.glance.action.clickable
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
@@ -139,12 +140,25 @@ private fun WidgetTaskRow(task: Task, textColor: Color, isDark: Boolean) {
             colorFilter = ColorFilter.tint(ColorProvider(textColor))
         )
         Spacer(modifier = GlanceModifier.width(6.dp))
-        Column {
-            Text(
-                text = task.title,
-                style = TextStyle(color = ColorProvider(textColor), fontSize = 15.sp),
-                maxLines = 1
-            )
+        Column(modifier = GlanceModifier.defaultWeight()) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = task.title,
+                    style = TextStyle(color = ColorProvider(textColor), fontSize = 15.sp),
+                    maxLines = 1,
+                    modifier = GlanceModifier.defaultWeight()
+                )
+                if (task.note.isNotEmpty()) {
+                    val subColor = if (isDark) Color(0xFFBBBBBB) else Color(0xFF555555)
+                    Spacer(modifier = GlanceModifier.width(4.dp))
+                    Image(
+                        provider = ImageProvider(R.drawable.ic_widget_note),
+                        contentDescription = null,
+                        modifier = GlanceModifier.size(12.dp),
+                        colorFilter = ColorFilter.tint(ColorProvider(subColor))
+                    )
+                }
+            }
             Text(
                 text = label,
                 style = TextStyle(color = ColorProvider(labelColor), fontSize = 13.sp)

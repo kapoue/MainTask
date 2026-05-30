@@ -13,10 +13,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -38,13 +41,14 @@ import com.maintask.app.data.Task
 @Composable
 fun TaskFormDialog(
     task: Task?,
-    onConfirm: (title: String, intervalDays: Int, iconKey: String) -> Unit,
+    onConfirm: (title: String, intervalDays: Int, iconKey: String, note: String) -> Unit,
     onDelete: (() -> Unit)?,
     onDismiss: () -> Unit
 ) {
     var title by remember { mutableStateOf(task?.title ?: "") }
     var intervalText by remember { mutableStateOf(task?.intervalDays?.toString() ?: "") }
     var selectedIcon by remember { mutableStateOf(task?.iconKey ?: "") }
+    var note by remember { mutableStateOf(task?.note ?: "") }
     var showDeleteConfirm by remember { mutableStateOf(false) }
 
     if (showDeleteConfirm) {
@@ -104,6 +108,15 @@ fun TaskFormDialog(
                     modifier = Modifier.fillMaxWidth()
                 )
 
+                OutlinedTextField(
+                    value = note,
+                    onValueChange = { note = it },
+                    label = { Text("Note (optionnel)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 2,
+                    maxLines = 4
+                )
+
                 Text("Icône", style = MaterialTheme.typography.labelMedium)
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(taskIconOptions) { option ->
@@ -142,17 +155,18 @@ fun TaskFormDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (onDelete != null) {
-                        TextButton(
-                            onClick = { showDeleteConfirm = true },
-                            colors = ButtonDefaults.textButtonColors(
-                                contentColor = MaterialTheme.colorScheme.error
+                        IconButton(onClick = { showDeleteConfirm = true }) {
+                            Icon(
+                                imageVector = Icons.Filled.Delete,
+                                contentDescription = "Supprimer",
+                                tint = MaterialTheme.colorScheme.error
                             )
-                        ) { Text("Supprimer") }
+                        }
                     }
                     Spacer(Modifier.weight(1f))
                     TextButton(onClick = onDismiss) { Text("Annuler") }
                     Button(
-                        onClick = { onConfirm(title.trim(), intervalText.toInt(), selectedIcon) },
+                        onClick = { onConfirm(title.trim(), intervalText.toInt(), selectedIcon, note.trim()) },
                         enabled = isValid
                     ) { Text("Confirmer") }
                 }

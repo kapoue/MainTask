@@ -12,7 +12,8 @@ data class Task(
     val intervalDays: Int,
     val lastDoneAt: Long,
     val iconKey: String,
-    @ColumnInfo(defaultValue = "0") val snoozedUntil: Long = 0L
+    @ColumnInfo(defaultValue = "0") val snoozedUntil: Long = 0L,
+    @ColumnInfo(defaultValue = "") val note: String = ""
 )
 
 val Task.nextDueAt: Long

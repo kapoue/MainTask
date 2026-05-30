@@ -4,9 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Task::class], version = 4, exportSchema = false)
+@Database(entities = [Task::class], version = 5, exportSchema = false)
 abstract class TaskDatabase : RoomDatabase() {
 
     abstract fun taskDao(): TaskDao
@@ -14,6 +15,14 @@ abstract class TaskDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var INSTANCE: TaskDatabase? = null
+
+        private val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "ALTER TABLE tasks ADD COLUMN note TEXT NOT NULL DEFAULT ''"
+                )
+            }
+        }
 
         fun getInstance(context: Context): TaskDatabase =
             INSTANCE ?: synchronized(this) {
@@ -23,6 +32,7 @@ abstract class TaskDatabase : RoomDatabase() {
                     "maintask_db"
                 )
                     .fallbackToDestructiveMigrationFrom(1, 2, 3)
+                    .addMigrations(MIGRATION_4_5)
                     .addCallback(SeedCallback())
                     .build()
                     .also { INSTANCE = it }
