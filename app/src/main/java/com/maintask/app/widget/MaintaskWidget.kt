@@ -13,8 +13,11 @@ import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.action.actionStartActivity
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.lazy.LazyColumn
+import androidx.glance.appwidget.lazy.items
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
@@ -26,8 +29,6 @@ import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
-import androidx.glance.layout.wrapContentWidth
-import androidx.glance.action.clickable
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -47,7 +48,6 @@ class MaintaskWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val tasks = TaskDatabase.getInstance(context).taskDao()
             .getAllSortedByDueDateOnce()
-            .take(3)
         val isDark = context.resources.configuration.uiMode and
                 Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 
@@ -98,8 +98,10 @@ private fun WidgetBody(tasks: List<Task>, isDark: Boolean) {
                 style = TextStyle(color = ColorProvider(subColor), fontSize = 15.sp)
             )
         } else {
-            tasks.forEach { task ->
-                WidgetTaskRow(task, textColor, isDark)
+            LazyColumn(modifier = GlanceModifier.fillMaxWidth().defaultWeight()) {
+                items(tasks, itemId = { it.id.toLong() }) { task ->
+                    WidgetTaskRow(task, textColor, isDark)
+                }
             }
         }
     }
