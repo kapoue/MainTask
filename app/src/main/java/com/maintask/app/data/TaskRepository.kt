@@ -1,10 +1,12 @@
 package com.maintask.app.data
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class TaskRepository(private val dao: TaskDao) {
 
-    val allTasks: Flow<List<Task>> = dao.getAllSortedByDueDate()
+    val allTasks: Flow<List<Task>> = dao.getAllTasks()
+        .map { list -> list.sortedBy { it.effectiveDueAt } }
 
     suspend fun markDone(task: Task) {
         dao.update(task.copy(lastDoneAt = System.currentTimeMillis(), snoozedUntil = 0L))

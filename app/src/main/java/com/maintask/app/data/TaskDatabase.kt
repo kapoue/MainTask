@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Task::class], version = 5, exportSchema = false)
+@Database(entities = [Task::class], version = 6, exportSchema = false)
 abstract class TaskDatabase : RoomDatabase() {
 
     abstract fun taskDao(): TaskDao
@@ -18,9 +18,15 @@ abstract class TaskDatabase : RoomDatabase() {
 
         private val MIGRATION_4_5 = object : Migration(4, 5) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL(
-                    "ALTER TABLE tasks ADD COLUMN note TEXT NOT NULL DEFAULT ''"
-                )
+                database.execSQL("ALTER TABLE tasks ADD COLUMN note TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
+        private val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE tasks ADD COLUMN recurrenceType TEXT NOT NULL DEFAULT 'DAYS'")
+                database.execSQL("ALTER TABLE tasks ADD COLUMN weekDays INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE tasks ADD COLUMN monthDays INTEGER NOT NULL DEFAULT 0")
             }
         }
 
@@ -32,7 +38,7 @@ abstract class TaskDatabase : RoomDatabase() {
                     "maintask_db"
                 )
                     .fallbackToDestructiveMigrationFrom(1, 2, 3)
-                    .addMigrations(MIGRATION_4_5)
+                    .addMigrations(MIGRATION_4_5, MIGRATION_5_6)
                     .addCallback(SeedCallback())
                     .build()
                     .also { INSTANCE = it }

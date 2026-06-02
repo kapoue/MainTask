@@ -20,6 +20,7 @@ import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.background
 import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
@@ -47,7 +48,8 @@ class MaintaskWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val tasks = TaskDatabase.getInstance(context).taskDao()
-            .getAllSortedByDueDateOnce()
+            .getAllTasksOnce()
+            .sortedBy { it.effectiveDueAt }
         val isDark = context.resources.configuration.uiMode and
                 Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 
@@ -69,10 +71,11 @@ private fun iconResForKey(key: String): Int = when (key) {
 
 @Composable
 private fun WidgetBody(tasks: List<Task>, isDark: Boolean) {
-    val bgColor    = if (isDark) Color(0xFF1E1E1E) else Color(0xFFF5F5F5)
-    val textColor  = if (isDark) Color(0xFFEEEEEE) else Color(0xFF333333)
-    val titleColor = if (isDark) Color(0xFF90CAF9) else Color(0xFF1565C0)
-    val subColor   = if (isDark) Color(0xFFBBBBBB) else Color(0xFF555555)
+    val bgColor      = if (isDark) Color(0xFF1E1E1E) else Color(0xFFF5F5F5)
+    val textColor    = if (isDark) Color(0xFFEEEEEE) else Color(0xFF333333)
+    val titleColor   = if (isDark) Color(0xFF90CAF9) else Color(0xFF1565C0)
+    val subColor     = if (isDark) Color(0xFFBBBBBB) else Color(0xFF555555)
+    val dividerColor = if (isDark) Color(0xFF3A3A3A) else Color(0xFFDDDDDD)
 
     val openAppAction = actionStartActivity<MainActivity>()
 
@@ -91,7 +94,14 @@ private fun WidgetBody(tasks: List<Task>, isDark: Boolean) {
                 fontWeight = FontWeight.Bold
             )
         )
-        Spacer(modifier = GlanceModifier.height(8.dp))
+        Spacer(modifier = GlanceModifier.height(6.dp))
+        Box(
+            modifier = GlanceModifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(ColorProvider(dividerColor))
+        ) {}
+        Spacer(modifier = GlanceModifier.height(6.dp))
         if (tasks.isEmpty()) {
             Text(
                 text = "Aucune tâche à venir",
@@ -100,7 +110,7 @@ private fun WidgetBody(tasks: List<Task>, isDark: Boolean) {
         } else {
             LazyColumn(modifier = GlanceModifier.fillMaxWidth().defaultWeight()) {
                 items(tasks, itemId = { it.id.toLong() }) { task ->
-                    WidgetTaskRow(task, textColor, isDark)
+                    WidgetTaskRow(task, textColor, isDark, openAppAction)
                 }
             }
         }
@@ -108,7 +118,7 @@ private fun WidgetBody(tasks: List<Task>, isDark: Boolean) {
 }
 
 @Composable
-private fun WidgetTaskRow(task: Task, textColor: Color, isDark: Boolean) {
+private fun WidgetTaskRow(task: Task, textColor: Color, isDark: Boolean, openApp: androidx.glance.action.Action) {
     val days = task.daysRemaining
     val dueDateLabel: String = run {
         val cal = Calendar.getInstance().apply { timeInMillis = task.effectiveDueAt }
@@ -132,7 +142,10 @@ private fun WidgetTaskRow(task: Task, textColor: Color, isDark: Boolean) {
     }
 
     Row(
-        modifier = GlanceModifier.fillMaxWidth().padding(vertical = 3.dp),
+        modifier = GlanceModifier
+            .fillMaxWidth()
+            .padding(vertical = 3.dp)
+            .clickable(openApp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(

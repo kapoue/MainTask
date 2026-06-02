@@ -38,14 +38,25 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun addTask(title: String, intervalDays: Int, iconKey: String, note: String = "") {
+    fun addTask(
+        title: String,
+        intervalDays: Int,
+        iconKey: String,
+        note: String = "",
+        recurrenceType: String = "DAYS",
+        weekDays: Int = 0,
+        monthDays: Int = 0
+    ) {
         viewModelScope.launch {
             val newTask = Task(
                 title = title,
                 intervalDays = intervalDays,
                 lastDoneAt = System.currentTimeMillis(),
                 iconKey = iconKey,
-                note = note
+                note = note,
+                recurrenceType = recurrenceType,
+                weekDays = weekDays,
+                monthDays = monthDays
             )
             val id = repository.insert(newTask)
             NotificationScheduler.scheduleForTask(getApplication(), newTask.copy(id = id.toInt()))

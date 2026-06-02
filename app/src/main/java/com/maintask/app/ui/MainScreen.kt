@@ -203,8 +203,8 @@ fun MainScreen(viewModel: TaskViewModel = viewModel()) {
     if (showAddDialog) {
         TaskFormDialog(
             task = null,
-            onConfirm = { title, interval, icon, note ->
-                viewModel.addTask(title, interval, icon, note)
+            onConfirm = { title, interval, icon, note, recurrenceType, weekDays, monthDays ->
+                viewModel.addTask(title, interval, icon, note, recurrenceType, weekDays, monthDays)
                 showAddDialog = false
             },
             onDelete = null,
@@ -215,8 +215,13 @@ fun MainScreen(viewModel: TaskViewModel = viewModel()) {
     editingTask?.let { task ->
         TaskFormDialog(
             task = task,
-            onConfirm = { title, interval, icon, note ->
-                viewModel.updateTask(task.copy(title = title, intervalDays = interval, iconKey = icon, note = note))
+            onConfirm = { title, interval, icon, note, recurrenceType, weekDays, monthDays ->
+                viewModel.updateTask(
+                    task.copy(
+                        title = title, intervalDays = interval, iconKey = icon, note = note,
+                        recurrenceType = recurrenceType, weekDays = weekDays, monthDays = monthDays
+                    )
+                )
                 editingTask = null
             },
             onDelete = {
